@@ -21,45 +21,38 @@
  * IN THE SOFTWARE.
  */
 
-/** @file wgl.h
+/** @file glx.h
  *
- * Provides an implementation of a WGL dispatch layer using a hidden
- * vtable.
+ * Provides an implementation of a GLX dispatch layer using global
+ * function pointers.
  */
 
-#ifndef EPOXY_WGL_H
-#define EPOXY_WGL_H
+#ifndef EPOXY_GLX_H
+#define EPOXY_GLX_H
 
-#include <epoxy/common.h>
+#include <epoxy/gl.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
 #include <stdbool.h>
-#include <windows.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#undef wglUseFontBitmaps
-#undef wglUseFontOutlines
-
-#if defined(__wglxext_h_)
-#error epoxy/wgl.h must be included before (or in place of) wgl.h
+#if defined(GLX_H) || defined(__glxext_h_)
+#error epoxy/glx.h must be included before (or in place of) GL/glx.h
 #else
-#define __wglxext_h_
+#define GLX_H
+#define __glxext_h_
 #endif
 
-#ifdef UNICODE
-#define wglUseFontBitmaps wglUseFontBitmapsW
-#else
-#define wglUseFontBitmaps wglUseFontBitmapsA
-#endif
+#include "epoxy/glx_generated.h"
 
-#include "epoxy/wgl_generated.h"
-
-EPOXY_IMPORTEXPORT bool epoxy_has_wgl_extension(HDC hdc, const char *extension);
-EPOXY_IMPORTEXPORT void epoxy_handle_external_wglMakeCurrent(void);
+EPOXY_IMPORTEXPORT bool epoxy_has_glx_extension(Display *dpy, int screen, const char *extension);
+EPOXY_IMPORTEXPORT int epoxy_glx_version(Display *dpy, int screen);
 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
-#endif /* EPOXY_WGL_H */
+#endif /* EPOXY_GLX_H */

@@ -30,6 +30,7 @@ typedef struct _GPU_DEVICE *PGPU_DEVICE;
 #define WGL_3DL_stereo_control 1
 #define WGL_AMD_gpu_association 1
 #define WGL_ARB_buffer_region 1
+#define WGL_ARB_context_flush_control 1
 #define WGL_ARB_create_context 1
 #define WGL_ARB_create_context_profile 1
 #define WGL_ARB_create_context_robustness 1
@@ -79,6 +80,7 @@ typedef struct _GPU_DEVICE *PGPU_DEVICE;
 #define WGL_NV_video_output 1
 #define WGL_OML_sync_control 1
 
+#define WGL_CONTEXT_RELEASE_BEHAVIOR_NONE_ARB            0
 #define WGL_FONT_LINES                                   0
 #define WGL_ACCESS_READ_ONLY_NV                          0x00000000
 #define WGL_ACCESS_READ_WRITE_NV                         0x00000001
@@ -280,6 +282,8 @@ typedef struct _GPU_DEVICE *PGPU_DEVICE;
 #define WGL_CONTEXT_FLAGS_ARB                            0x2094
 #define ERROR_INVALID_VERSION_ARB                        0x2095
 #define ERROR_INVALID_PROFILE_ARB                        0x2096
+#define WGL_CONTEXT_RELEASE_BEHAVIOR_ARB                 0x2097
+#define WGL_CONTEXT_RELEASE_BEHAVIOR_FLUSH_ARB           0x2098
 #define WGL_BIND_TO_TEXTURE_RECTANGLE_RGB_NV             0x20A0
 #define WGL_BIND_TO_TEXTURE_RECTANGLE_RGBA_NV            0x20A1
 #define WGL_TEXTURE_RECTANGLE_NV                         0x20A2
