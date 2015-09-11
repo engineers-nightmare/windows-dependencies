@@ -1,7 +1,0 @@
-EXPORTS
-mlock
-mmap
-mprotect
-msync
-munlock
-munmap
