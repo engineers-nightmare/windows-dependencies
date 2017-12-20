@@ -39,7 +39,7 @@ struct btMultiBodyJacobianData
 };
 
 
-class btMultiBodyConstraint
+ATTRIBUTE_ALIGNED16(class) btMultiBodyConstraint
 {
 protected:
 
@@ -58,6 +58,7 @@ protected:
 	btScalar		m_maxAppliedImpulse;
 
 
+    // warning: the data block lay out is not consistent for all constraints
     // data block laid out as follows:
     // cached impulses. (one per row.)
     // jacobians. (interleaved, row1 body1 then row1 body2 then row2 body 1 etc)
@@ -65,25 +66,35 @@ protected:
     btAlignedObjectArray<btScalar> m_data;
 
 	void	applyDeltaVee(btMultiBodyJacobianData& data, btScalar* delta_vee, btScalar impulse, int velocityIndex, int ndof);
-
+    
 	btScalar fillMultiBodyConstraint(btMultiBodySolverConstraint& solverConstraint,
 																btMultiBodyJacobianData& data,
-																btScalar* jacOrgA, btScalar* jacOrgB,
-																const btVector3& contactNormalOnB,
+                                     btScalar* jacOrgA, btScalar* jacOrgB,
+                                     const btVector3& constraintNormalAng,
+                                     
+																const btVector3& constraintNormalLin,
 																const btVector3& posAworld, const btVector3& posBworld,
 																btScalar posError,
 																const btContactSolverInfo& infoGlobal,
-																btScalar lowerLimit, btScalar upperLimit,
+                                     btScalar lowerLimit, btScalar upperLimit,
+                                     bool angConstraint = false,
+                                     
 																btScalar relaxation = 1.f,
 																bool isFriction = false, btScalar desiredVelocity=0, btScalar cfmSlip=0);
 
 public:
+
+	BT_DECLARE_ALIGNED_ALLOCATOR();
 
 	btMultiBodyConstraint(btMultiBody* bodyA,btMultiBody* bodyB,int linkA, int linkB, int numRows, bool isUnilateral);
 	virtual ~btMultiBodyConstraint();
 
 	void updateJacobianSizes();
 	void allocateJacobiansMultiDof();
+
+	//many constraints have setFrameInB/setPivotInB. Will use 'getConstraintType' later.
+	virtual void setFrameInB(const btMatrix3x3& frameInB) {}
+	virtual void setPivotInB(const btVector3& pivotInB){}
 
 	virtual void finalizeMultiDof()=0;
 
@@ -108,6 +119,20 @@ public:
 		return m_bodyB;
 	}
 
+	void	internalSetAppliedImpulse(int dof, btScalar appliedImpulse)
+	{
+		btAssert(dof>=0);
+		btAssert(dof < getNumRows());
+		m_data[dof] = appliedImpulse;
+        
+	}
+	
+	btScalar	getAppliedImpulse(int dof)
+	{
+		btAssert(dof>=0);
+		btAssert(dof < getNumRows());
+		return m_data[dof];
+	}
 	// current constraint position
     // constraint is pos >= 0 for unilateral, or pos = 0 for bilateral
     // NOTE: ignored position for friction rows.
@@ -158,6 +183,12 @@ public:
 
 	virtual void debugDraw(class btIDebugDraw* drawer)=0;
 
+	virtual void setGearRatio(btScalar ratio) {}
+	virtual void setGearAuxLink(int gearAuxLink) {}
+	virtual void setRelativePositionTarget(btScalar relPosTarget){}
+	virtual void setErp(btScalar erp){}
+	
+	
 };
 
 #endif //BT_MULTIBODY_CONSTRAINT_H
