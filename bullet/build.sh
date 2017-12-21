@@ -14,11 +14,12 @@ cmake -G "Visual Studio 15 2017 Win64" \
       -DBUILD_EXTRAS:BOOL="0" \
       -H. -Bbuild
 
-cmake --build build --config RelWithDebInfo
+cmake --build build --config RelWithDebInfo -- /maxcpucount
 
 mkdir -p lib64
 for f in BulletCollision BulletDynamics LinearMath BulletSoftBody BulletInverseDynamics; do
   mv build/lib/RelWithDebInfo/${f}_RelWithDebugInfo.lib lib64/${f}.lib
 done
+find build/src/ -name '*.pdb' -exec mv {} lib64 \;
 
 rm -rf build
